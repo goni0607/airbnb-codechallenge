@@ -25,7 +25,6 @@ SECRET_KEY = "b#s*_o(3t3ai_k(c5po@h7a=nj5#vjkd3u7ckhnx@)mi=8fn67"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(os.environ.get("DEBUG"))
-
 ALLOWED_HOSTS = []
 
 
@@ -92,7 +91,7 @@ WSGI_APPLICATION = "config.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-if DEBUG is False:
+if DEBUG if False:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
@@ -152,5 +151,6 @@ STATIC_URL = "/static/"
 ALLOWED_HOSTS = ["*"]
 X_FRAME_OPTIONS = "*"
 
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 AUTH_USER_MODEL = "users.User"
