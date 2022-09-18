@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block page_title %}
+  {{book.title}}
+{% endblock page_title %}
+
+
+{% block content %}
+
+<div class="flex flex-col items-center bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+  <h2 class="font-bold">{{book.title}}</h2>
+  <div class="flex items-center my-2">
+    <div class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700">{{book.year}}</div>
+    <div class="bg-orange-400 text-white px-3 shadow-md py-1 rounded-full mx-4">{{book.category}}</div>
+    <div class="text-red-600">♥︎{{book.rating}}</div>
+  </div>
+  <div class="my-2">Writer:
+    <div class="inline-block bg-white shadow-md rounded-full px-3 py-1 text-sm font-semibold text-gray-700">{{book.writer}}</div>
+  </div>
+  <div class="flex">
+    <a class="bg-blue-400 hover:bg-blue-600 text-white font-bold mt-4 py-2 px-4 rounded" href="{% url 'books:update' book.pk %}">Edit Book</a>
+    {% if user.is_authenticated %}
+      {% include "mixins/fav_button.html" with obj=book kind='book' %}
+    {% endif %}
+  </div>
+
+  <div class="mt-8 mx-4">
+    <h3 class="pt-4 mb-4 font-bold border-t">Create Review</h3>
+    <form id="create-review" action="{% url 'reviews:createbook' book.pk %}" method="POST">
+      {% csrf_token %}
+      {% if review_form.non_field_errors %}
+        {% for error in form.non_field_errors %}
+            <span>{{error}}</span> 
+        {% endfor %}
+      {% endif %}
+
+      {% for field in review_form %}
+        <div class="mb-5">
+            <label class="block text-gray-700 text-sm font-bold mb-2" for="{{field.auto_id}}">{{field.label}}</label>
+            <div class="shadow appearance-none border rounded w-full  text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+            {{field}}
+            </div>
+        </div>
+      {% endfor %}
+      <button type="submit" class="bg-blue-400 hover:bg-blue-600 text-white font-bold mt-2 py-2 px-4 rounded w-full">Submit Review</button>
+    </form>
+  </div>
+
+  <div class="mt-8 mx-4 w-full max-w-screen-sm">
+    <h3 class="my-4 font-bold">Review List</h3>
+    {% for review in book.reviews.all|dictsortreversed:'pk' %}
+    <div class="mt-4 border-b">
+      <div class="mb-3 flex">
+        <div>
+          <div class="{{h_and_w|default:'h-20 w-20'}} bg-gray-700 rounded-full text-white flex justify-center items-center overflow-hidden">
+            <span class="{{text|default:'text-3xl'}}">{{review.created_by.first_name|first}}</span>
+          </div>
+        </div>
+        <div class="flex flex-col ml-5">
+            <span class="font-medium">{{review.created_by.first_name}}</span>
+            <span class="text-sm text-gray-500">{{review.created_at}}</span>
+        </div>
+      </div>
+      <p class="pb-4">{{review.text}}</p>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+{% endblock content %}
